@@ -88,6 +88,25 @@ function upload_preparation_file($image_url, $post_id)
 }else{
 	echo '<p>Photo don\'t exist...</p>';
 }
+} // end of photo function
+
+
+// add metadata to preparats
+function addPreparatusMeta($preparatusMetaList, $post_id){
+ 
+ foreach ($MetaList as $meta => $metaValue) {
+ if($metaValue != ''){
+ 	add_post_meta( $post_id, $meta, $metaValue, true );
+ }}
+}
+
+// update metadata to preparats
+function updatePreparatusMeta($preparatusMetaList, $post_id){
+ 
+ foreach ($MetaList as $meta => $metaValue) {
+ if($metaValue != ''){
+ 	update_post_meta( $post_id, $meta, $metaValue );
+ }}
 }
 
 ?>
@@ -317,105 +336,40 @@ echo '<p>atx: '. $productsList_array['Composition'] . '</p>';
 
 
 
+$preparatusMetaList = array(
+	'DBRegistrationNumber' => $preparationsId, 
+	'_sj_product_pregnancy' => $PregnancyUsing, 
+	'_sj_product_children' => $ChildInsufUsing, 
+	'_sj_product_prescription' => $NonPrescriptionDrug, 
+	'_sj_substance' => $substance, 
+	'_sj_atx' => $atx, 
+	'_sj_add_info|sj_composition|0|0|value' => wp_strip_all_tags($Composition), 
+	'_sj_add_info|sj_pharmacological_action|0|0|value' => wp_strip_all_tags($pharmacological_action), 
+	'_sj_add_info|sj_method|0|0|value' => wp_strip_all_tags($Dosage), 
+	'_sj_add_info|sj_side_effects|0|0|value' => wp_strip_all_tags($SideEffects), 
+	'_sj_add_info|sj_indications|0|0|value' => wp_strip_all_tags($Indication), 
+	'_sj_add_info|sj_interaction|0|0|value' => wp_strip_all_tags($Interaction)
+	);
+
+
 // add new preparation
 if(!$isPostExist){
+
 $post_id = wp_insert_post( $post_data );
-echo '<br> adding new preparation: ' . $isPostExist;
-add_post_meta( $post_id, 'DBRegistrationNumber', $preparationsId, true );
+addPreparatusMeta($preparatusMetaList, $post_id);
 
-if($PregnancyUsing != ''){
- add_post_meta( $post_id, '_sj_product_pregnancy', $PregnancyUsing, true );
-}
-
-if($ChildInsufUsing != ''){
- add_post_meta( $post_id, '_sj_product_children', $ChildInsufUsing, true );
-}
-
-if($NonPrescriptionDrug != ''){
- add_post_meta( $post_id, '_sj_product_prescription', $NonPrescriptionDrug, true );
-}
-
-if($substance != ''){
- add_post_meta( $post_id, '_sj_substance', $substance, true );
-}
-if($atx != ''){
- add_post_meta( $post_id, '_sj_atx', $atx, true );
-}
-if($Composition != ''){
- add_post_meta( $post_id, '_sj_add_info|sj_composition|0|0|value', wp_strip_all_tags($Composition), true );
-}
-if($pharmacological_action != ''){
-	 add_post_meta( $post_id, '_sj_add_info|sj_pharmacological_action|0|0|value', wp_strip_all_tags($pharmacological_action), true );
-	}
-
-if($Dosage != ''){
-	 add_post_meta( $post_id, '_sj_add_info|sj_method|0|0|value', wp_strip_all_tags($Dosage), true );
-	}
-if($SideEffects != ''){
-	 add_post_meta( $post_id, '_sj_add_info|sj_side_effects|0|0|value', wp_strip_all_tags($SideEffects), true );
-	}
-if($Indication != ''){
-	 add_post_meta( $post_id, '_sj_add_info|sj_indications|0|0|value', wp_strip_all_tags($Indication), true );
-	}
-if($Interaction != ''){
-	 add_post_meta( $post_id, '_sj_add_info|sj_interaction|0|0|value', wp_strip_all_tags($Interaction), true );
-	}
-
-if($photo_URL != ''){
-
-	upload_preparation_file('http://otabletkah.ru/wp-content/uploads/dbintimages/'.$photo_URL, $post_id);
-//add_post_meta( $post_id, 'photo_URL', 'http://otabletkah.ru/wp-content/uploads/'.$photo_URL, true );
-}
+  if($photo_URL != ''){
+  upload_preparation_file('http://otabletkah.ru/wp-content/uploads/dbintimages/'.$photo_URL, $post_id);
+  }
 }else {
-	$post_data['ID'] =$isPostExist;
-	wp_update_post($post_data);
+$post_data['ID'] =$isPostExist;
+wp_update_post($post_data);
 	echo '<br> preparation #' . $isPostExist . ' existed';
 
-	update_post_meta( $isPostExist, 'DBRegistrationNumber', $preparationsId );
-
-	if($PregnancyUsing != ''){
-	 update_post_meta( $isPostExist, '_sj_product_pregnancy', $PregnancyUsing );
-	}
-
-	if($ChildInsufUsing != ''){
-	 update_post_meta( $isPostExist, '_sj_product_children', $ChildInsufUsing );
-	}
-
-	if($NonPrescriptionDrug != ''){
-	 update_post_meta( $isPostExist, '_sj_product_prescription', $NonPrescriptionDrug );
-	}
-
-	if($substance != ''){
-	 update_post_meta( $isPostExist, '_sj_substance', $substance );
-	}
-
-	if($atx != ''){
-	 update_post_meta( $isPostExist, '_sj_atx', $atx );
-	}
-
-	if($Composition != ''){
-	 update_post_meta( $isPostExist, '_sj_add_info|sj_composition|0|0|value', wp_strip_all_tags($Composition) );
-	}
-	if($pharmacological_action != ''){
-	 update_post_meta( $isPostExist, '_sj_add_info|sj_pharmacological_action|0|0|value', wp_strip_all_tags($pharmacological_action) );
-	}
-	if($Dosage != ''){
-	 update_post_meta( $isPostExist, '_sj_add_info|sj_method|0|0|value', wp_strip_all_tags($Dosage) );
-	}
-	if($SideEffects != ''){
-	 update_post_meta( $isPostExist, '_sj_add_info|sj_side_effects|0|0|value', wp_strip_all_tags($SideEffects) );
-	}
-	if($Indication != ''){
-	 update_post_meta( $isPostExist, '_sj_add_info|sj_indications|0|0|value', wp_strip_all_tags($Indication) );
-	}
-	if($Interaction != ''){
-	 update_post_meta( $isPostExist, '_sj_add_info|sj_interaction|0|0|value', wp_strip_all_tags($Interaction) );
-	}
-
-	if($photo_URL != ''){
-		upload_preparation_file('http://otabletkah.ru/wp-content/uploads/dbintimages/'.$photo_URL, $isPostExist);
-		//update_post_meta( $isPostExist, 'photo_URL', 'http://otabletkah.ru/wp-content/uploads/'.$photo_URL );
-	}
+	updatePreparatusMeta($preparatusMetaList, $post_id);
+  if($photo_URL != ''){
+  upload_preparation_file('http://otabletkah.ru/wp-content/uploads/dbintimages/'.$photo_URL, $isPostExist);
+  }
 }
 
 // add marker for DB resurs
