@@ -362,19 +362,20 @@ $compare = mysqli_query($dbRes, "SELECT * FROM Product");
 }
 ##########################
 # remove preparats
-# remove with all metadata & media files
+# remove with all metadata
 if($_GET['removepreparatus']){
 	// array of preparat
 
 $args = array(
-	//'numberposts' => 10,
+	'numberposts' => 100,
 	'post_type' => 'preparations'
 );
 $recent_posts = wp_get_recent_posts( $args, ARRAY_A );
    echo '<ul>';
 foreach( $recent_posts as $recent ){
    wp_delete_post($recent["ID"], true);
-   echo '<li>' . $recent["post_title"] . ' removed... </li> ';
+   wp_delete_attachment ( get_post_thumbnail_id($recent["ID"]), true );
+   echo '<li>' . $recent["post_title"] . ' removed...</li> ';
 }
    echo '</ul>';
 wp_reset_query();
