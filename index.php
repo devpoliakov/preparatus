@@ -82,18 +82,20 @@ function upload_preparation_file($image_url, $post_id)
 // add metadata to preparats
 function addPreparatusMeta($preparatusMetaList, $post_id){
  
- foreach ($MetaList as $meta => $metaValue) {
+ foreach ($preparatusMetaList as $meta => $metaValue) {
  if($metaValue != ''){
  	add_post_meta( $post_id, $meta, $metaValue, true );
+ 	echo '<p> metadata: ' . $metaValue . '</p>';
  }}
 }
 
 // update metadata to preparats
 function updatePreparatusMeta($preparatusMetaList, $post_id){
  
- foreach ($MetaList as $meta => $metaValue) {
+ foreach ($preparatusMetaList as $meta => $metaValue) {
  if($metaValue != ''){
  	update_post_meta( $post_id, $meta, $metaValue );
+ 	echo '<p> metadata: ' . $metaValue . '</p>';
  }}
 }
 
@@ -157,11 +159,9 @@ $Interaction = '';
 
 echo"<pre>";
 //var_dump($productsList_array);
-echo '<br>' . $productsList_array['RusName'];
+echo '<p>' . $productsList_array['RusName'] . '</p>';
 
 
-
-echo '-- '; 	
 //var_dump($productsList_array['RegistrationNumber']);
 
 if($productsList_array['RegistrationNumber']){
@@ -305,6 +305,7 @@ $preparatusMetaList = array(
 if(!$isPostExist){
 
 $post_id = wp_insert_post( $post_data );
+
 addPreparatusMeta($preparatusMetaList, $post_id);
 
   if($photo_URL != ''){
