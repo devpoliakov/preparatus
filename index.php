@@ -349,7 +349,7 @@ echo"</pre>";
 
 
 ##########################
-# substance integration
+# compare data
 if($_GET['compare']){
 $compare = mysqli_query($dbRes, "SELECT * FROM Product");
 	echo '<h2>Good connection</h2>';
@@ -359,6 +359,25 @@ $compare = mysqli_query($dbRes, "SELECT * FROM Product");
     echo '</pre>';
     mysqli_free_result($compare);
 
+}
+##########################
+# remove preparats
+# remove with all metadata & media files
+if($_GET['removepreparatus']){
+	// array of preparat
+
+$args = array(
+	//'numberposts' => 10,
+	'post_type' => 'preparations'
+);
+$recent_posts = wp_get_recent_posts( $args, ARRAY_A );
+   echo '<ul>';
+foreach( $recent_posts as $recent ){
+   wp_delete_post($recent["ID"], true);
+   echo '<li>' . $recent["post_title"] . ' removed... </li> ';
+}
+   echo '</ul>';
+wp_reset_query();
 }
 
 ##########################
