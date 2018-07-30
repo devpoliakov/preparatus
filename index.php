@@ -110,47 +110,8 @@ function updatePreparatusMeta($preparatusMetaList, $post_id){
 }
 
 ?>
-<script src="/wp-content/themes/medotzovik/main.js"></script>
-<style type="text/css">
-
-	#holder {
-		font-family: Arial;
-		width: 500px;
-		margin: 100px auto;
-		text-align:center;
-	}
-	
-	#output {
-		padding-top: 20px;
-		font-size: 11px;
-	}
-
-	a.requestIntegration{
-		
-		padding: 5px 15px;
-		color: #fff;
-		text-decoration: none;
-		display: inline-block;
-		margin: 3px 15px;
-		border: 1px solid #1E5799;
-		border-radius: 5px;
-
-/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1e5799+0,2989d8+50,7db9e8+100 */
-background: #1e5799; /* Old browsers */
-background: -moz-linear-gradient(-45deg, #1e5799 0%, #2989d8 50%, #7db9e8 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(-45deg, #1e5799 0%,#2989d8 50%,#7db9e8 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(135deg, #1e5799 0%,#2989d8 50%,#7db9e8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-	}
-	a.requestIntegration:hover{
-		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1e5799+0,2989d8+50,7db9e8+100 */
-background: #1e5799; /* Old browsers */
-background: -moz-linear-gradient(45deg, #1e5799 0%, #2989d8 50%, #7db9e8 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(45deg, #1e5799 0%,#2989d8 50%,#7db9e8 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(45deg, #1e5799 0%,#2989d8 50%,#7db9e8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#7db9e8',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
-	}
-</style>
+<script src="<?php echo get_template_directory_uri(); ?>/js/main.js"></script>
+<link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/css/preparatus.css?ver=1.15">
 <h3>Предварительная подготовка</h3>
 <ul>
 
@@ -176,7 +137,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', end
 /**
 *
 */
-
+// mysqladmin ("-h 194.28.172.92 -u torpedo03_2 -p 111111") create torpedo03_2
 $dbRes = mysqli_connect("194.28.172.92", "torpedo03_1", "111111") or die ("No connect to database-home Smile");
 mysqli_select_db($dbRes, "torpedo03_1") or die("Could not select database");
 $query='SET NAMES utf8';
@@ -386,6 +347,19 @@ echo"</pre>";
 ##########################
 # END of products integration
 
+
+##########################
+# substance integration
+if($_GET['compare']){
+$compare = mysqli_query($dbRes, "SELECT * FROM Product");
+	echo '<h2>Good connection</h2>';
+    printf("Select returned %d rows.\n", mysqli_num_rows($compare));
+    echo '<pre>';
+    print_r(mysqli_fetch_array($compare));
+    echo '</pre>';
+    mysqli_free_result($compare);
+
+}
 
 ##########################
 # substance integration
