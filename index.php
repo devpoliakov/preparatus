@@ -42,38 +42,25 @@ if (!function_exists('get_post_id_by_meta_key_and_value')) {
 // image to library
 function upload_preparation_file($image_url, $post_id)
 {
-	if(file_exists($image_url)){
-
-
-    //$image = $image_url;
-    $image = 'http://otabletkah.ru/wp-content/uploads/dbintimages/PackShots/advantan-cream.jpg';
-
-
-    $get = wp_remote_get($image);
+	if(file_exists($_SERVER["DOCUMENT_ROOT"] . $image_url)){
+    // upload file from own server...
+    // temporary part, need to change for time optimisation
+    $get = wp_remote_get(site_url() . $image_url);
     $type = wp_remote_retrieve_header($get, 'content-type');
+    if (!$type) return false;
 
-    if (!$type) {
-        return false;
-    }
-
-    $mirror = wp_upload_bits(basename($image), '', wp_remote_retrieve_body($get));
-
-
+    $mirror = wp_upload_bits(basename(site_url() . $image_url), '', wp_remote_retrieve_body($get));
 
     $attachment = array(
-        'post_title' => basename($image),
+        'post_title' => basename(site_url() . $image_url),
         'post_mime_type' => $type
     );
-
+    
+    // create media file
     $attach_id = wp_insert_attachment($attachment, $mirror['file'], $post_id);
 
-    echo '<br> inner photo: ';
-	print_r($attach_id);
-
     require_once(ABSPATH . 'wp-admin/includes/image.php');
-
     $attach_data = wp_generate_attachment_metadata($attach_id, $mirror['file']);
-    echo '<p>Your mirror file: '.$mirror['file'].'</p>';
 
     wp_update_attachment_metadata($attach_id, $attach_data);
     
@@ -83,6 +70,7 @@ function upload_preparation_file($image_url, $post_id)
 	}
 
     set_post_thumbnail($post_id, $attach_id);
+    echo '<p>Photo path: "' .$image_url.'"</p>';
 
     return $attach_id;
 }else{
@@ -149,7 +137,7 @@ $dbintimages =$_SERVER["DOCUMENT_ROOT"] . '/wp-content/uploads/dbintimages/';
 if($_GET['preparationsint']){
 $productsList = mysqli_query($dbRes, "SELECT RusName, RegistrationNumber, ProductID, NonPrescriptionDrug,Composition
 	FROM Product GROUP by EngName 
-	ORDER BY ProductID ASC limit 100");
+	ORDER BY ProductID ASC limit 40");
  while($productsList_array = mysqli_fetch_array($productsList)){
 
 // variables for change
@@ -320,7 +308,7 @@ $post_id = wp_insert_post( $post_data );
 addPreparatusMeta($preparatusMetaList, $post_id);
 
   if($photo_URL != ''){
-  upload_preparation_file($_SERVER["DOCUMENT_ROOT"] . '/wp-content/uploads/dbintimages/'.$photo_URL, $post_id);
+  upload_preparation_file('/wp-content/uploads/dbintimages/'.$photo_URL, $post_id);
   }
 }else {
 $post_data['ID'] =$isPostExist;
@@ -329,7 +317,7 @@ wp_update_post($post_data);
 
 	updatePreparatusMeta($preparatusMetaList, $post_id);
   if($photo_URL != ''){
-  upload_preparation_file($_SERVER["DOCUMENT_ROOT"] . '/wp-content/uploads/dbintimages/'.$photo_URL, $isPostExist);
+  upload_preparation_file('/wp-content/uploads/dbintimages/'.$photo_URL, $isPostExist);
   }
 }
 
