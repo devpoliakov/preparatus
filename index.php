@@ -43,15 +43,14 @@ if (!function_exists('get_post_id_by_meta_key_and_value')) {
 function upload_preparation_file($image_url, $post_id)
 {
 	if(file_exists($image_url)){
-	echo '<p>Your photo don\'t exist</p>';
 
-    $image = $image_url;
+
+    //$image = $image_url;
+    $image = 'http://otabletkah.ru/wp-content/uploads/dbintimages/PackShots/advantan-cream.jpg';
 
 
     $get = wp_remote_get($image);
-
     $type = wp_remote_retrieve_header($get, 'content-type');
-
 
     if (!$type) {
         return false;
@@ -74,6 +73,7 @@ function upload_preparation_file($image_url, $post_id)
     require_once(ABSPATH . 'wp-admin/includes/image.php');
 
     $attach_data = wp_generate_attachment_metadata($attach_id, $mirror['file']);
+    echo '<p>Your mirror file: '.$mirror['file'].'</p>';
 
     wp_update_attachment_metadata($attach_id, $attach_data);
     
@@ -86,7 +86,7 @@ function upload_preparation_file($image_url, $post_id)
 
     return $attach_id;
 }else{
-	echo '<p>Photo don\'t exist...</p>';
+	echo '<p>Photo "'.$image_url.'" don\'t exist...</p>';
 }
 } // end of photo function
 
@@ -320,7 +320,7 @@ $post_id = wp_insert_post( $post_data );
 addPreparatusMeta($preparatusMetaList, $post_id);
 
   if($photo_URL != ''){
-  upload_preparation_file('http://otabletkah.ru/wp-content/uploads/dbintimages/'.$photo_URL, $post_id);
+  upload_preparation_file($_SERVER["DOCUMENT_ROOT"] . '/wp-content/uploads/dbintimages/'.$photo_URL, $post_id);
   }
 }else {
 $post_data['ID'] =$isPostExist;
@@ -329,7 +329,7 @@ wp_update_post($post_data);
 
 	updatePreparatusMeta($preparatusMetaList, $post_id);
   if($photo_URL != ''){
-  upload_preparation_file('http://otabletkah.ru/wp-content/uploads/dbintimages/'.$photo_URL, $isPostExist);
+  upload_preparation_file($_SERVER["DOCUMENT_ROOT"] . '/wp-content/uploads/dbintimages/'.$photo_URL, $isPostExist);
   }
 }
 
@@ -373,8 +373,8 @@ $args = array(
 $recent_posts = wp_get_recent_posts( $args, ARRAY_A );
    echo '<ul>';
 foreach( $recent_posts as $recent ){
-   wp_delete_post($recent["ID"], true);
    wp_delete_attachment ( get_post_thumbnail_id($recent["ID"]), true );
+   wp_delete_post($recent["ID"], true);
    echo '<li>' . $recent["post_title"] . ' removed...</li> ';
 }
    echo '</ul>';
