@@ -149,7 +149,7 @@ $dbintimages =$_SERVER["DOCUMENT_ROOT"] . '/wp-content/uploads/dbintimages/';
 if($_GET['preparationsint']){
 $productsList = mysqli_query($dbRes, "SELECT RusName, RegistrationNumber, ProductID, NonPrescriptionDrug,Composition
 	FROM Product GROUP by EngName 
-	ORDER BY ProductID ASC");
+	ORDER BY ProductID ASC limit 100");
  while($productsList_array = mysqli_fetch_array($productsList)){
 
 // variables for change
@@ -483,9 +483,12 @@ if (!empty($_FILES['attachment'])) {
 if ($zip->open($dbintimages . $srcFileName) === TRUE) {
     $zip->extractTo($dbintimages);
     $zip->close();
-    echo '<p>Done</p>';
-    unlink($dbintimages . $srcFileName);
-    echo '<p>File deleted</p>';
+    echo '<p>Done</p>';    
+    // remove zip file after unpaching
+    if(file_exists($newFilePath)){
+    unlink($newFilePath);
+    echo '<p>File"'.$srcFileName.'" deleted</p>';
+    }
 } else {
     echo 'Error';
 }
