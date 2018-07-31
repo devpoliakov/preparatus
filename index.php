@@ -142,44 +142,24 @@ $productsList = mysqli_query($dbRes, "SELECT RusName, RegistrationNumber, Produc
 	ORDER BY ProductID ASC limit 40");
  while($productsList_array = mysqli_fetch_array($productsList)){
 
-// variables for change
-$preparationsId = '';
-$photo_URL = '';
-$PregnancyUsing = '';
-$ChildInsufUsing = '';
-$NonPrescriptionDrug = '';
-$substance = '';
-$atx = '';
-$Composition = '';
-$pharmacological_action = '';
-$Dosage = '';
-$SideEffects = '';
-$Indication = '';
-$Interaction = '';
+// array for preparation data
+$preparatusMetaList = array();
 
 echo"<pre>";
 //var_dump($productsList_array);
 echo '<p>' . $productsList_array['RusName'] . '</p>';
 
 
-//var_dump($productsList_array['RegistrationNumber']);
-
-if($productsList_array['RegistrationNumber']){
-$preparationsId = $productsList_array['RegistrationNumber'];
-}else{$preparationsId = '';}
+   $preparatusMetaList['DBRegistrationNumber']= $productsList_array['RegistrationNumber'];
  
 // NonPrescriptionDrug
 if($productsList_array['NonPrescriptionDrug'] == 1){
-	$NonPrescriptionDrug = 3;
+   $preparatusMetaList['_sj_product_prescription']= 3;
 } else {
-	$NonPrescriptionDrug = 1;
+   $preparatusMetaList['_sj_product_prescription']= 1;
 } 
-// Composition
-if($productsList_array['Composition'] != ''){
-	$Composition = $productsList_array['Composition'];
-}
 
-
+   $preparatusMetaList['_sj_add_info|sj_composition|0|0|value']= $productsList_array['Composition'];
 
 // test get pos meta function
 $isPostExist =  get_post_id_by_meta_key_and_value('DBRegistrationNumber', $preparationsId);
@@ -195,45 +175,31 @@ $productDocument = mysqli_query($dbRes, $documentRequest);
 
 // PregnancyUsing
  	if($document_array['PregnancyUsing'] == 'Not'){
- 		$PregnancyUsing = 1;
+         $preparatusMetaList['_sj_product_pregnancy']= 1;
  	} else if($document_array['PregnancyUsing'] == 'Care'){
- 		$PregnancyUsing = 2;
+         $preparatusMetaList['_sj_product_pregnancy']= 2;
  	} else if($document_array['PregnancyUsing'] == 'Can'){
- 		$PregnancyUsing = 3;
+         $preparatusMetaList['_sj_product_pregnancy']= 3;
  	}
 
 
 // ChildInsufUsing
  	if($document_array['ChildInsufUsing'] == 'Not'){
- 		$ChildInsufUsing = 1;
+         $preparatusMetaList['_sj_product_children']= 1;
  	} else if($document_array['ChildInsufUsing'] == 'Care'){
- 		$ChildInsufUsing = 2;
+         $preparatusMetaList['_sj_product_children']= 2;
  	} else if($document_array['ChildInsufUsing'] == 'Can'){
- 		$ChildInsufUsing = 3;
+         $preparatusMetaList['_sj_product_children']= 3;
  	}
 
- // pharmacological action
- 	if($document_array['PhInfluence'] != ''){
- 		$pharmacological_action = $document_array['PhInfluence'];
- 	} 
- // Dosage
- 	if($document_array['Dosage'] != ''){
- 		$Dosage = $document_array['Dosage'];
- 	} 
- // SideEffects
- 	if($document_array['SideEffects'] != ''){
- 		$SideEffects = $document_array['SideEffects'];
- 	} 
- // Interaction
- 	if($document_array['Interaction'] != ''){
- 		$Interaction = $document_array['Interaction'];
- 	} 
- // Indication
- 	if($document_array['Indication'] != ''){
- 		$Indication = $document_array['Indication'];
- 	} 
 
- }
+   $preparatusMetaList['_sj_add_info|sj_pharmacological_action|0|0|value']= $document_array['PhInfluence'];
+   $preparatusMetaList['_sj_add_info|sj_method|0|0|value']= $document_array['Dosage'];
+   $preparatusMetaList['_sj_add_info|sj_side_effects|0|0|value']= $document_array['SideEffects'];
+   $preparatusMetaList['_sj_add_info|sj_indications|0|0|value']= $document_array['Indication'];
+   $preparatusMetaList['_sj_add_info|sj_interaction|0|0|value']= $document_array['Interaction'];	
+}
+
 
 
 // get image information 
@@ -246,31 +212,24 @@ $productImage = mysqli_query($dbRes, $imageRequest);
 $photo_URL = str_replace( '\\' ,'/', $productsImage_array['Path']);
  }
 
+
 // get substance information 
 $substanceRequest = "SELECT MoleculeName.RusName FROM Product_MoleculeName 
 left join MoleculeName on Product_MoleculeName.MoleculeNameID = MoleculeName.MoleculeNameID
 where ProductID = '".$productsList_array['ProductID']."'";
 
 $Product_MoleculeName = mysqli_query($dbRes, $substanceRequest);
- while($substance_array = mysqli_fetch_array($Product_MoleculeName)){
-
-// got postID with substance
-$substance = post_exists(wp_slash($substance_array['RusName'])); 
-//echo '<p>Substance: '. $substance_array['RusName'] . '</p>';
- }
+while($substance_array = mysqli_fetch_array($Product_MoleculeName)){
+   $preparatusMetaList['_sj_substance'] = post_exists(wp_slash($substance_array['RusName']));
+}
 
  // get ATX information 
-$ATXRequest = "SELECT ATCCode FROM Product_ATC 
-where ProductID = '".$productsList_array['ProductID']."'";
+$ATXRequest = "SELECT ATCCode FROM Product_ATC where ProductID = '".$productsList_array['ProductID']."'";
 
 $Product_ATC = mysqli_query($dbRes, $ATXRequest);
- while($ATX_array = mysqli_fetch_array($Product_ATC)){
-
-// got postID with substance
-$atx = post_exists(wp_slash($ATX_array['ATCCode'])); 
-echo '<p>atx: '. $ATX_array['ATCCode'] . '</p>';
- }
-
+while($ATX_array = mysqli_fetch_array($Product_ATC)){
+   $preparatusMetaList['_sj_atx'] = post_exists(wp_slash($ATX_array['ATCCode']));
+}
 
 // array of preparat
 $post_data = array(
@@ -278,27 +237,6 @@ $post_data = array(
 	'post_status'   => 'publish',
 	'post_type' => 'preparations'
 );
-
-
-echo '<p>atx: '. $productsList_array['Composition'] . '</p>';
-
-
-
-
-$preparatusMetaList = array(
-	'DBRegistrationNumber' => $preparationsId, 
-	'_sj_product_pregnancy' => $PregnancyUsing, 
-	'_sj_product_children' => $ChildInsufUsing, 
-	'_sj_product_prescription' => $NonPrescriptionDrug, 
-	'_sj_substance' => $substance, 
-	'_sj_atx' => $atx, 
-	'_sj_add_info|sj_composition|0|0|value' => wp_strip_all_tags($Composition), 
-	'_sj_add_info|sj_pharmacological_action|0|0|value' => wp_strip_all_tags($pharmacological_action), 
-	'_sj_add_info|sj_method|0|0|value' => wp_strip_all_tags($Dosage), 
-	'_sj_add_info|sj_side_effects|0|0|value' => wp_strip_all_tags($SideEffects), 
-	'_sj_add_info|sj_indications|0|0|value' => wp_strip_all_tags($Indication), 
-	'_sj_add_info|sj_interaction|0|0|value' => wp_strip_all_tags($Interaction)
-	);
 
 
 // add new preparation
@@ -328,8 +266,9 @@ update_post_meta( $isPostExist, 'DB_resurs', 'DB1' );
 update_post_meta( $isPostExist, 'activityMode', 'active' );
 
 echo"</pre>";
- 
 
+// remove all data of old loop
+unset($preparatusMetaList);
 
  } // end of while
 }
