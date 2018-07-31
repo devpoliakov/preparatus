@@ -144,7 +144,8 @@ $productsList = mysqli_query($dbRes, "SELECT RusName, RegistrationNumber, Produc
 
 // array for preparation data
 $preparatusMetaList = array();
-
+// clear old photo url
+$photo_URL = '';
 echo"<pre>";
 //var_dump($productsList_array);
 echo '<p>' . $productsList_array['RusName'] . '</p>';
